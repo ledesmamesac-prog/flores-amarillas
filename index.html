@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Un detalle para ti 💛</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts para tipografías elegantes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Contenedor de la lluvia de pétalos -->
+    <div class="petals-rain-container" id="petalsRain" aria-hidden="true"></div>
+
+    <div class="main-wrapper">
+        <!-- PASO 1: Botón inicial -->
+        <div class="welcome-screen" id="welcomeScreen">
+            <h1 class="welcome-title">Tengo una sorpresa para ti...</h1>
+            <button type="button" class="btn-press" id="pressBtn">Presióname 💛</button>
+        </div>
+
+        <!-- PASO 2 & 3: Escena del ramo y mensaje -->
+        <div class="bouquet-screen hidden" id="bouquetScreen">
+            <!-- El ramo (un SVG) se dibuja desde script.js -->
+            <div class="bouquet-container" id="bouquetContainer"></div>
+            <div class="message-box" id="messageBox">
+                <h2 class="romantic-title">¡Feliz día de las flores amarillas!</h2>
+                <p class="romantic-text">
+                    Dicen que regalar flores amarillas ilumina los días más bonitos y alegres. 
+                    Que este detalle te recuerde lo especial que eres y te saque una gran sonrisa hoy y siempre. ✨💛
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

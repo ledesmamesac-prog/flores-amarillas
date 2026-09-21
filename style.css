@@ -1,0 +1,296 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: radial-gradient(circle at center, #1e1b4b 0%, #0f172a 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    font-family: 'Poppins', sans-serif;
+    color: #f8fafc;
+    overflow-x: hidden;
+    overflow-y: auto;
+    position: relative;
+    padding: 15px;
+}
+
+/* Lluvia de pétalos amarillos de fondo */
+.petals-rain-container {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.falling-petal {
+    position: absolute;
+    background: linear-gradient(135deg, #fff3a3 0%, #f5b301 100%);
+    border-radius: 0 100% 0 100%;
+    opacity: 0.7;
+    animation: fall linear infinite;
+    will-change: transform;
+}
+
+@keyframes fall {
+    0% {
+        transform: translate3d(0, -10vh, 0) rotate(0deg);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.8;
+    }
+    90% {
+        opacity: 0.8;
+    }
+    100% {
+        transform: translate3d(var(--deriva, 0px), 110vh, 0) rotate(var(--giro, 360deg));
+        opacity: 0;
+    }
+}
+
+/* Contenedor principal */
+.main-wrapper {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 500px;
+    margin: auto; /* centra sin cortar el contenido si la pantalla es muy baja */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+/* Pantalla inicial con el botón */
+.welcome-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    transition: opacity 0.5s ease;
+}
+
+.welcome-title {
+    font-size: clamp(1.5rem, 4vw, 2.2rem);
+    font-weight: 600;
+    margin-bottom: 25px;
+    color: #fef08a;
+    text-shadow: 0 4px 15px rgba(234, 179, 8, 0.3);
+}
+
+.btn-press {
+    background: linear-gradient(135deg, #facc15 0%, #ca8a04 100%);
+    color: #422006;
+    border: none;
+    padding: 16px 36px;
+    font-family: inherit;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(234, 179, 8, 0.5);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    animation: pulseBtn 2s infinite;
+}
+
+.btn-press:hover {
+    transform: scale(1.08);
+    box-shadow: 0 8px 25px rgba(234, 179, 8, 0.8);
+}
+
+.btn-press:focus-visible {
+    outline: 3px solid #fef08a;
+    outline-offset: 4px;
+}
+
+@keyframes pulseBtn {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(250, 204, 21, 0.6); }
+    70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(250, 204, 21, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(250, 204, 21, 0); }
+}
+
+/* Pantalla del Ramo */
+.bouquet-screen {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.bouquet-screen.visible {
+    animation: entrarPantalla 1s ease both;
+}
+
+@keyframes entrarPantalla {
+    from { opacity: 0; transform: scale(0.94); }
+    to   { opacity: 1; transform: scale(1); }
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* El ramo mantiene la proporción del dibujo (320 x 400) y se adapta a la altura de la pantalla */
+.bouquet-container {
+    position: relative;
+    height: clamp(250px, 50vh, 400px);
+    height: clamp(250px, 50dvh, 400px);
+    aspect-ratio: 4 / 5;
+    max-width: 100%;
+    margin-bottom: 14px;
+}
+
+/* Resplandor cálido detrás del ramo */
+.bouquet-container::before {
+    content: "";
+    position: absolute;
+    inset: 2% -16% 8% -16%;
+    background: radial-gradient(closest-side, rgba(250, 204, 21, 0.3), rgba(250, 204, 21, 0.1) 55%, transparent 100%);
+    animation: aparecer 1.6s ease 0.4s both;
+    pointer-events: none;
+}
+
+.bouquet-svg {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+
+/* ---------- Animaciones del ramo (todas se pueden retrasar con --d) ---------- */
+
+/* Un balanceo muy suave, arranca cuando ya florecieron todas */
+.balanceo {
+    transform-box: view-box;
+    transform-origin: 160px 392px;
+    animation: balanceo 7s ease-in-out 3.6s infinite;
+}
+
+@keyframes balanceo {
+    0%, 100% { transform: rotate(0deg); }
+    25%      { transform: rotate(1.1deg); }
+    75%      { transform: rotate(-1.1deg); }
+}
+
+/* El papel sube desde abajo, el lazo aparece encima */
+.papel {
+    animation: subirPapel 0.9s cubic-bezier(0.2, 0.9, 0.3, 1) both;
+}
+
+@keyframes subirPapel {
+    from { opacity: 0; transform: translateY(46px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.lazo {
+    transform-box: view-box;
+    transform-origin: 160px 341px;
+    animation: pop 0.7s cubic-bezier(0.34, 1.6, 0.5, 1) 0.7s both;
+}
+
+@keyframes pop {
+    from { opacity: 0; transform: scale(0); }
+    to   { opacity: 1; transform: scale(1); }
+}
+
+/* Los tallos crecen desde el papel hacia arriba */
+.tallo {
+    stroke-dasharray: 1;
+    animation: crecer 0.8s ease-out var(--d, 0s) both;
+}
+
+@keyframes crecer {
+    from { stroke-dashoffset: 1; }
+    to   { stroke-dashoffset: 0; }
+}
+
+/* Las hojas se abren desde su base */
+.hoja {
+    transform-origin: 0 0;
+    animation: abrirHoja 0.9s cubic-bezier(0.34, 1.4, 0.5, 1) var(--d, 0s) both;
+}
+
+@keyframes abrirHoja {
+    from { opacity: 0; transform: scale(0); }
+    to   { opacity: 1; transform: scale(1); }
+}
+
+/* Las flores se abren girando un poquito, con un rebote al final */
+.florecer {
+    transform-origin: 0 0;
+    animation: florecer 0.95s cubic-bezier(0.34, 1.5, 0.5, 1) var(--d, 0s) both;
+}
+
+@keyframes florecer {
+    from { opacity: 0; transform: scale(0) rotate(-45deg); }
+    35%  { opacity: 1; }
+    to   { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+
+/* Florecitas blancas de relleno */
+.punto {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: pop 0.5s cubic-bezier(0.34, 1.6, 0.5, 1) var(--d, 0s) both;
+}
+
+@keyframes aparecer {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* Caja de mensaje bonito */
+.message-box {
+    background: rgba(255, 255, 255, 0.06);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(254, 240, 138, 0.2);
+    border-radius: 20px;
+    padding: 22px 18px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+}
+
+/* El mensaje llega cuando el ramo ya terminó de florecer */
+.bouquet-screen.visible .message-box {
+    animation: subirMensaje 1s ease 2.6s both;
+}
+
+@keyframes subirMensaje {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.romantic-title {
+    font-family: 'Great Vibes', cursive;
+    font-size: clamp(2.2rem, 6vw, 3rem);
+    color: #fef08a;
+    margin-bottom: 8px;
+    font-weight: normal;
+    line-height: 1.1;
+}
+
+.romantic-text {
+    font-size: clamp(0.9rem, 2.6vw, 1rem);
+    color: #e2e8f0;
+    line-height: 1.6;
+    font-weight: 300;
+}
+
+/* Si la persona pidió menos movimiento, todo aparece ya terminado */
+@media (prefers-reduced-motion: reduce) {
+    .btn-press,
+    .bouquet-screen,
+    .bouquet-screen * ,
+    .bouquet-container::before {
+        animation: none !important;
+    }
+}
