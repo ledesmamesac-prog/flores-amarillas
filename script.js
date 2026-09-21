@@ -4,6 +4,23 @@ document.addEventListener("DOMContentLoaded", () => {
     const bouquetScreen = document.getElementById("bouquetScreen");
     const bouquetContainer = document.getElementById("bouquetContainer");
     const petalsRainContainer = document.getElementById("petalsRain");
+    const audio = document.getElementById("bgMusic");
+    const musicToggle = document.getElementById("musicToggle");
+
+    /* ------------------------------------------------------------------
+       MÚSICA DE FONDO
+       - Con un archivo: ponlo en la misma carpeta que index.html y escribe
+         su nombre aquí (por ejemplo "cancion.mp3").
+       - Con un enlace: pega la URL directa al archivo de audio
+         (tiene que terminar en .mp3, .m4a, .ogg o similar).
+       - Sin música: deja src vacío ("").
+       Si el archivo no se encuentra, la página funciona igual, solo que
+       sin sonido y sin el botón de música.
+    ------------------------------------------------------------------ */
+    const MUSICA = {
+        src: "FloresAmarillas.mp3",  // nombre del archivo o URL directa
+        volumen: 0.6,   // de 0 (silencio) a 1 (máximo)
+    };
 
     // Si la persona tiene activado "reducir movimiento", no ponemos la lluvia de pétalos
     const sinMovimiento = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -13,6 +30,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     pressBtn.addEventListener("click", () => {
         pressBtn.disabled = true;
+        // La música tiene que arrancar aquí, directo del clic: si no, el navegador la bloquea
+        iniciarMusica();
         // Ocultar pantalla de bienvenida con transición suave
         welcomeScreen.style.opacity = "0";
         setTimeout(() => {
@@ -20,7 +39,60 @@ document.addEventListener("DOMContentLoaded", () => {
             bouquetScreen.classList.remove("hidden");
             bouquetScreen.classList.add("visible");
             buildBouquet();
+            if (hayMusica) musicToggle.classList.remove("hidden");
         }, 500);
+    });
+
+    /* ------------------------------- Música -------------------------------- */
+    let hayMusica = Boolean(MUSICA.src);
+    let fundido = null;
+
+    if (hayMusica) {
+        audio.src = MUSICA.src;
+        // Si el archivo no existe o no se puede leer, quitamos el botón y seguimos sin música
+        audio.addEventListener("error", () => {
+            hayMusica = false;
+            musicToggle.classList.add("hidden");
+        });
+    }
+
+    function iniciarMusica() {
+        if (!hayMusica) return;
+        audio.volume = 0;
+        const intento = audio.play();
+        if (intento) {
+            intento.then(subirVolumen).catch(() => pintarBoton());
+        }
+        pintarBoton();
+    }
+
+    // El volumen sube poco a poco (unos 3 segundos) para que no arranque de golpe
+    function subirVolumen() {
+        clearInterval(fundido);
+        const pasos = 30;
+        let i = 0;
+        fundido = setInterval(() => {
+            i++;
+            audio.volume = Math.min(1, MUSICA.volumen) * (i / pasos);
+            if (i >= pasos) clearInterval(fundido);
+        }, 100);
+        pintarBoton();
+    }
+
+    function pintarBoton() {
+        const sonando = !audio.paused;
+        musicToggle.textContent = sonando ? "🔊" : "🔇";
+        musicToggle.setAttribute("aria-label", sonando ? "Pausar música" : "Reproducir música");
+    }
+
+    musicToggle.addEventListener("click", () => {
+        if (audio.paused) {
+            audio.volume = Math.min(1, MUSICA.volumen);
+            audio.play().then(pintarBoton).catch(pintarBoton);
+        } else {
+            audio.pause();
+            pintarBoton();
+        }
     });
 
     /* ------------------------------------------------------------------
